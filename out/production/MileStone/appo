@@ -1,0 +1,81 @@
+@Override
+public ExpValue<?> visitFuncCall(langParser.FuncCallContext ctx) {
+    String name = ctx.ID().getText();
+
+    if (!conf.functionExists(name)) {
+        System.err.println("Function " + name + " doesn't exist");
+        System.exit(1);
+    }
+
+    langParser.FuncContext body = conf.functions.get(name);
+
+    boolean isSlyarnFunction = body.brainfuck() != null;
+
+    if (isSlyarnFunction) {
+        visitBfcommand((langParser.BfcommandContext) body.brainfuck());
+        return null; // Or throw, depending on if Slyarn funcs return values
+    } else {
+        // Pattern match to extract the return variable
+        Pattern pattern = Pattern.compile("ret\\s+(\\w+);");
+        Matcher matcher = pattern.matcher(body.getText());
+        String getRetValName = matcher.find() ? matcher.group(1) : null;
+
+        // Execute function body
+        for (langParser.ComContext com : body.com()) {
+            visitCom(com);
+        }
+
+        if (getRetValName == null) {
+            System.err.println("Function " + name + " did not return a value.");
+            System.exit(1);
+        }
+
+        if (!conf.contains(getRetValName)) {
+            System.err.println("Return variable " + getRetValName + " is undefined.");
+            System.exit(1);
+        }
+
+        return conf.get(getRetValName);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ @Override
+    public Value visitFuncCall(langParser.FuncCallContext ctx) {
+        String name = ctx.ID().getText();
+
+        if ( !conf.functionExists(name) ) {
+            System.err.println("Function " + name + " doesn't exists");
+            System.exit(1);
+        }
+
+        langParser.FuncContext body  = conf.functions.get(name);
+
+        boolean isSlyarnFunction = body.brainfuck()!= null;
+
+        if (isSlyarnFunction) {
+            visitBfcommand((langParser.BfcommandContext)body.brainfuck());
+        } else {
+
+            //ottengo il nome della funzione
+            String nameF = body.ID().getText();
+
+
+            //ottengo la variabile da ritornare
+            Pattern pattern = Pattern.compile("ret(\\w+);");
+            Matcher matcher = pattern.matcher(body.getText());
+            String getRetValName = matcher.find() ? matcher.group(1) : null;
+
+            //Inserisco dentro alla HashMap l'associazione nomeF e variabile da ritornare per usarla sopra
+
+            conf.updateResult(nameF,getRetValName);
+            for (langParser.ComContext com : body.com()) {
+                visitCom(com);
+            }
+        }
+
+
+        return ComValue.INSTANCE;
+
+    }
