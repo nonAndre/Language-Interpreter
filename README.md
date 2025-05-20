@@ -53,9 +53,9 @@ This language supports the following features:
 8. **Functions**
 
 9. **Brainfuck Integration**  
-The command `sly{...}arnold` allows embedding any Brainfuck program inside your code.  
-The interpreter must be able to execute these Brainfuck programs seamlessly.  
-Recommended Brainfuck interpreter for testing: [https://copy.sh/brainfuck/](https://copy.sh/brainfuck/)
+   The command `sly{...}arnold` allows embedding any Brainfuck program inside your code.  
+   The interpreter must be able to execute these Brainfuck programs seamlessly.  
+   Recommended Brainfuck interpreter for testing: [https://copy.sh/brainfuck/](https://copy.sh/brainfuck/)
 
 ---
 
